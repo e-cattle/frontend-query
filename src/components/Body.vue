@@ -9,47 +9,42 @@
 
 				<v-tab>
 					Autenticação
-					<!-- <v-icon>fingerprint</v-icon> -->
 				</v-tab>
 
 				<v-tab>
 					Consultas
-					<!-- <v-icon>people</v-icon> -->
 				</v-tab>
 
 				<v-tab>
 					Monitor
-					<!-- <v-icon>how_to_reg</v-icon> -->
 				</v-tab>
 
 				<v-tab-item>
 					<AuthTabs />
 				</v-tab-item>
 
-				<!-- <v-tab-item>
-					<UsuarioAbas />
-				</v-tab-item> -->
+				<v-tab-item>
+					<QueryTabs />
+				</v-tab-item>
 
-				<!-- <v-tab-item>
-					<PerfilAbas />
-				</v-tab-item> -->
+				<v-tab-item>
+					<MonitorTabs />
+				</v-tab-item>
 			</v-tabs>
 		</v-flex>
 	</v-layout>
 </template>
 
 <script>
-import AuthTabs from './auth/Tabs'
-// import UsuarioLogado from './autenticacao/UsuarioLogado'
-// import UsuarioAbas from './usuario/Abas'
-// import PerfilAbas from './perfil/Abas'
+import AuthTabs from './auth/AuthTabs'
+import QueryTabs from './query/QueryTabs'
+import MonitorTabs from './monitor/MonitorTabs'
 
 export default {
 	components: {
 		AuthTabs,
-		// UsuarioLogado,
-		// UsuarioAbas,
-		// PerfilAbas,
+		QueryTabs,
+		MonitorTabs
 	},
 }
 </script>

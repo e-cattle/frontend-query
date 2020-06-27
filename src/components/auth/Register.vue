@@ -79,57 +79,58 @@ export default {
         // }
     },
     methods: {
-      // async setToken () {
-      //   const { token, ip } = await this.getToken()
+      async setToken () {
+        const { token, ip } = await this.getToken()
 
-      //   console.log('QRTOKEN: ' + token)
-      //   console.log('IP: ' + ip)
+        console.log('QRTOKEN: ' + token)
+        console.log('IP: ' + ip)
 
-      //   this.$session.set('QRTOKEN', token)
-      // },
-      // async getToken () {
-      //   this.counter++
+        this.$session.set('QRTOKEN', token)
+        this.$session.set('IP', ip)
+      },
+      async getToken () {
+        this.counter++
 
-      //   console.log('Retry number #' + this.counter)
+        console.log('Retry number #' + this.counter)
 
-      //   try {
-      //     const { data } = await axios.get('http://192.168.15.16:3000/totem/qr')
+        try {
+          const { data } = await axios.get('http://192.168.15.16:3000/totem/qr')
 
-      //     return data
-      //   } catch (e) {
-      //     this.error = e.response.message || e
-      //     this.dialog = true
+          return data
+        } catch (e) {
+          this.error = e.response.message || e
+          this.dialog = true
 
-      //     await this.sleep(8000)
+          await this.sleep(8000)
 
-      //     return this.getToken()
-      //   }
-      // },
-      // sleep (ms) {
-      //   return new Promise(resolve => setTimeout(resolve, ms))
-      // },
+          return this.getToken()
+        }
+      },
+      sleep (ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+      },
 
     register() {
-      // this.config = {
-      // headers: { 'Authorization': 'Bearer ' + this.$session.get('QRTOKEN') }
-      // }
-      const kernelurl = 'http://'+this.ip+':3000'
+      this.config = {
+      headers: { 'Authorization': 'Bearer ' + this.$session.get('QRTOKEN') }
+      }
+      const kernelurl = 'http://192.168.15.16:3000'
       console.log(this.config)
       console.log(this.app)
 
       axios.post(kernelurl+'/totem/application/connect', this.app, this.config).then((response) => {
-        console.log(response)
+        console.log(response.data)
       }).catch((error) => {
           this.erros = error
       })
     }
     },
     beforeMount () {
-        // this.setToken()
-        this.ip = this.$session.get('IP')
-        this.config = {
-        headers: { 'Authorization': 'Bearer ' + this.$session.get('QRTOKEN') }
-        }
+        this.setToken()
+        // this.ip = this.$session.get('IP')
+        // this.config = {
+        // headers: { 'Authorization': 'Bearer ' + this.$session.get('QRTOKEN') }
+        // }
     },
     mounted(){
       // this.setToken()
