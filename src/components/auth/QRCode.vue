@@ -27,9 +27,9 @@ import QRCode from './QRCodeReader'
 const methods = {
   geTokem (object) {
    this.qr = JSON.parse(object)
-    console.log(this.qr)
-    this.$session.set('QRTOKEN', this.qr.token)
-    this.$session.set('IP', this.qr.ip)
+    // console.log(this.qr)
+    localStorage.setItem('QRTOKEN', this.qr.token)
+    localStorage.setItem('IP', this.qr.ip)
     this.viewQRCode = false
   },
   getError (object) {

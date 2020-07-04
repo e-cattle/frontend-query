@@ -27,22 +27,6 @@
                         </v-btn>
                 </v-layout>
             </v-flex>
-            <!-- <v-flex>
-                <v-layout column class="ma-3">
-                    <h1 class="headline">Resultado</h1>
-                    <v-divider />
-                    <template v-if="dados">
-                        <v-text-field label="ID" readonly
-                            v-model="dados.id" />
-                        <v-text-field label="Nome" readonly
-                            v-model="dados.nome" />
-                        <v-text-field label="E-mail" readonly
-                            v-model="dados.email" />
-                        <v-text-field label="Perfis" readonly
-                            :value="perfis" />
-                    </template>
-                </v-layout>
-            </v-flex> -->
         </v-layout>
     </v-container>
 </template>
@@ -52,89 +36,113 @@ import Erros from '../common/Erros'
 // import gql from 'graphql-tag'
 import axios from 'axios'
 // import https from 'https'
-
-// const instance = axios.create({
-//   httpsAgent: new https.Agent({  
-//     rejectUnauthorized: false
-//   })
-// })
-
-// console.log('kernelutl: ',kernelurl)
+import { mapActions } from 'vuex'
+// import Vue from 'vue'
+// import { ApolloClient } from 'apollo-client'
+// import { WebSocketLink } from "apollo-link-ws"
+// import { setContext } from "apollo-link-context"
+// import { InMemoryCache } from "apollo-cache-inmemory"
 
 export default {
     components: { Erros },
     data() {
         return {
             app: {},
-            // ip: {},
+            ip: {},
             dados: null,
             erros: null,
             counter: 0
         }
     },
-    computed: {
-        // perfis() {
-        //     return this.dados && this.dados.perfis &&
-        //         this.dados.perfis.map(p => p.rotulo).join(',')
-        // }
-    },
     methods: {
-      async setToken () {
-        const { token, ip } = await this.getToken()
+      ...mapActions(['setApplication']),
+    //   async setToken () {
+    //     const { token, ip } = await this.getToken()
 
-        console.log('QRTOKEN: ' + token)
-        console.log('IP: ' + ip)
+    //     console.log('QRTOKEN: ' + token)
+    //     console.log('IP: ' + ip)
 
-        this.$session.set('QRTOKEN', token)
-        this.$session.set('IP', ip)
-      },
-      async getToken () {
-        this.counter++
+    //     localStorage.setItem('QRTOKEN', token)
+    //     localStorage.setItem('IP', ip)
+    //   },
+    //   async getToken () {
+    //     this.counter++
 
-        console.log('Retry number #' + this.counter)
+    //     console.log('Retry number #' + this.counter)
 
-        try {
-          const { data } = await axios.get('http://192.168.15.16:3000/totem/qr')
+    //     try {
+    //       const { data } = await axios.get('http://192.168.15.16:3000/totem/qr')
 
-          return data
-        } catch (e) {
-          this.error = e.response.message || e
-          this.dialog = true
+    //       return data
+    //     } catch (e) {
+    //       this.error = e.response.message || e
+    //       this.dialog = true
 
-          await this.sleep(8000)
+    //       await this.sleep(8000)
 
-          return this.getToken()
-        }
-      },
-      sleep (ms) {
-        return new Promise(resolve => setTimeout(resolve, ms))
-      },
+    //       return this.getToken()
+    //     }
+    //   },
+    //   sleep (ms) {
+    //     return new Promise(resolve => setTimeout(resolve, ms))
+    //   },
 
-    register() {
-      this.config = {
-      headers: { 'Authorization': 'Bearer ' + this.$session.get('QRTOKEN') }
+      register() {
+        const kernelurl = 'http://'+this.ip+':3000'
+        console.log(this.config)
+        console.log(this.app)
+
+        axios.post(kernelurl+'/totem/application/connect', this.app, this.config).then((response) => {
+            console.log(response.data)
+            // localStorage.setItem('APPTOKEN', response.data.token)
+            this.setApplication({
+                token: response.data.token,
+            })
+
+        }).catch((error) => {
+            this.erros = error
+        })
+
+        // const IP = 'ws://'+localStorage.getItem('token')+':4000'
+
+        // Vue.use({
+        //       install(Vue) {
+        //       const wsLink = new WebSocketLink({
+        //           uri: IP,
+        //       })
+
+        //       const authLink = setContext((_, { headers }) => {
+        //           const token = localStorage.getItem('token')
+        //   //       console.log(token)
+        //   //       // Token Raspberry
+        //   //       // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRlIjoiMjAyMC0wNi0yM1QxNDo0MToxMC4zNTdaIiwiY29kZSI6IjBmYWZiODQwLWI1NjUtMTFlYS05NDExLTZmYzE3Y2E3MjNjOCIsImlhdCI6MTU5MjkyNTYyNH0.GI0dEFEVeVhXP71Vj5fLlb82QRoYeSR-GPTMlRuK-WE"
+        //   //       // Token Localhost
+        //   //       // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRlIjoiMjAyMC0wNi0yNFQwOTo1NToyNy4xODdaIiwiY29kZSI6ImExMWQ5OGQwLWI2MDMtMTFlYS1iZjk4LTcxOTk3ODE1NmQ0NCIsImlhdCI6MTU5Mjk5MzcyOX0.giLxNwqoBp7RLIs97AHoBW-Wv-gnk82c9mjkW-GEBw0"
+        //           return {
+        //           headers: {
+        //               ...headers,
+        //               authorization: token ? `Bearer ${token}` : ''
+        //           }
+        //           }
+        //       })
+
+        //       Vue.prototype.$api = new ApolloClient({
+        //           link: authLink.concat(wsLink),
+        //           cache: new InMemoryCache()
+        //       })
+
+        //     }
+        // })
       }
-      const kernelurl = 'http://192.168.15.16:3000'
-      console.log(this.config)
-      console.log(this.app)
-
-      axios.post(kernelurl+'/totem/application/connect', this.app, this.config).then((response) => {
-        console.log(response.data)
-      }).catch((error) => {
-          this.erros = error
-      })
-    }
     },
     beforeMount () {
-        this.setToken()
-        // this.ip = this.$session.get('IP')
-        // this.config = {
-        // headers: { 'Authorization': 'Bearer ' + this.$session.get('QRTOKEN') }
-        // }
+    //   this.setToken()
+      this.ip = localStorage.getItem('IP')
+      this.config = {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('QRTOKEN') }
+      }
     },
-    mounted(){
-      // this.setToken()
-    }
+    mounted(){}
 }
 </script>
 

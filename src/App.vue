@@ -14,15 +14,15 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import Body from './components/Body'
 
 export default {
 	name: 'App',
 	components: { Body },
-	// methods: mapActions(['setUsuario']),
+	methods: mapActions(['setApplication']),
 	// created() {
-	// 	this.setUsuario(null)
+	// 	this.setApplication(null)
 	// }
 }
 </script>

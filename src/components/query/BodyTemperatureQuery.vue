@@ -3,7 +3,7 @@
         <v-layout column>
             <v-flex>
                <v-layout column class="ma-3">
-                    <h1 class="headline">Consultar Valor Temperatura</h1>
+                    <h1 class="headline">Consultar Temperatura</h1>
                     <v-divider class="mb-3" />
                         <div v-if="erros">
                             <Erros :erros="erros" />
@@ -24,13 +24,19 @@
                 </div>
             </v-flex>
             <v-flex>
-                <v-data-table :headers="headers" :items="BodyTemperature" 
-                    hide-default-footer class="elevation-1">
+                <v-data-table 
+                  :headers="headers" 
+                  :items="temps"
+                  :items-per-page="pagination.rowsPerPage"
+                  :page.sync="pagination.page"
+                  :sort-by.sync="pagination.sortBy"
+                  sort-desc
+                >
                     <template slot="items" slot-scope="props">
                         <td>{{ props.item._id }}</td>
+                        <td>{{ props.item.resource }}</td>
                         <td>{{ props.item.storaged }}</td>
                         <td>{{ props.item.date }}</td>
-                        <td>{{ props.item.resource }}</td>
                         <td>{{ props.item.value }}</td>
                     </template>
                 </v-data-table>
@@ -42,27 +48,42 @@
 <script>
 import Erros from '../common/Erros'
 import gql from 'graphql-tag'
+// import '../../plugins/graphql'
 
 export default {
     components: { Erros },
     data() {
         return {
+            pagination: {
+              rowsPerPage: 5,
+              sortBy: 'storaged',
+              descending: true
+            },          
             erros: null,
-            BodyTemperature: [],
+            temps: [],
             filter: {},
             headers: [
                 { text: 'ID', value: '_id' },
-                { text: 'Data Armazenamento', value: 'storaged' },
-                { text: 'Data Coleta', value: 'date' },
                 { text: 'Recurso', value: 'resource' },
+                { text: 'Armazenamento', value: 'storaged' },
+                { text: 'Coleta', value: 'date' },
                 { text: 'Valor', value: 'value' },
             ],
         }
     },
+    computed: {
+      pages () {
+        if (this.pagination.rowsPerPage == null || this.pagination.totalItems == null) {
+          return 1
+        }
+
+        return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+      }
+    },
     methods: {
         getBodyTemperature() {
             // console.log(this.$api)
-            this.$api.query({
+            this.$apollo.query({
                 query: gql`
                     query(
                       $menorigual: Int
@@ -74,7 +95,7 @@ export default {
                             Gte: $maiorigual
                           }                         
                         ){
-                            _id storaged date resource value
+                            _id resource storaged date value
                         }
                     }
                 `,
@@ -84,8 +105,7 @@ export default {
                 },
                 fetchPolicy: 'network-only'
             }).then(resultado => {
-                this.BodyTemperature = resultado.data.BodyTemperature
-                console.log(this.BodyTemperature)
+                this.temps = resultado.data.BodyTemperature
                 this.filter = {}
                 this.erros = null
             }).catch(e => {

@@ -16,6 +16,7 @@
 <script>
 import BodyTemperatureQuery from './BodyTemperatureQuery'
 
+
 export default {
     components: { BodyTemperatureQuery }
 }
