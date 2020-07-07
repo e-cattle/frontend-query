@@ -83,7 +83,7 @@ export default {
     methods: {
         getBodyTemperature() {
             // console.log(this.$api)
-            this.$apollo.query({
+            this.$api.query({
                 query: gql`
                     query(
                       $menorigual: Int

@@ -5,7 +5,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    application: null
+    application: {
+      token: localStorage.getItem('token'),
+      ip: localStorage.getItem('IP')
+    }
   },
   mutations: {
     setApplication(state, application) {

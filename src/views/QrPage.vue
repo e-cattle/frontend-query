@@ -1,44 +1,31 @@
-<template>
-  <v-main class="container-qrcode">
-      <v-btn color="primary" class="ml-0 mt-3"
-          @click="openCamera">
-          Lendo QrCode
-      </v-btn>
-      <v-dialog v-model="state" persistent max-width="50%" max-height="50%">
-      <button @click="openCamera">Fechar Camera</button>
-        <template v-slot:activator="{ }"/>
-        <qrcode-stream v-if="isShowingCamera" @init="onInit" @decode="onDecode"></qrcode-stream>
-      </v-dialog>
-  </v-main>
-</template>
 
 <script>
+// @ is an alias to /src
+// import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
-  name: 'QRCode',
-  data () {
+  // name: 'QrPage',
+  data() {
     return {
       isShowingCamera: false,
-      state: false,
-      qr: null
+      isScanned: false
     }
   },
   methods: {
       openCamera() {
         this.isShowingCamera = !this.isShowingCamera
-        this.state = !this.state
       },
+
       onDecode (content) {
+        console.log(content)
         if(content){
           this.isShowingCamera = false
-          this.state = false
-          this.qr = JSON.parse(content)
-          localStorage.setItem('qrtoken', this.qr.token)
-          localStorage.setItem('ip', this.qr.ip)
-          this.$router.push({ path: '/register' })
         }
+        
       },
-      onInit (promise) {
+
+
+        onInit (promise) {
         promise
         .then(() => {
           this.decodedContent = null
@@ -66,7 +53,23 @@ export default {
         )
     }
   }
+    
+
+
 }
 </script>
 
+<template>
+  <div class="qrpage">
+    <p>Welcome to the QR Page</p>
+    <button @click="openCamera">{{ !isShowingCamera ? 'Scan a QR Code' : 'Close QR Scan' }}</button>
+    <qrcode-stream v-if="isShowingCamera" @init="onInit" @decode="onDecode"></qrcode-stream>
+  </div>
+</template>
 
+
+<style Lang="scss" scoped>
+  p{
+    color: #333;
+  }
+</style>
